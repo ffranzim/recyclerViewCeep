@@ -18,21 +18,23 @@ public class ListaNotasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
 
+        NotaDAO notaDAO = new NotaDAO();
+        populaNotas(notaDAO);
+        setRecyclerView(notaDAO);
+
+    }
+
+    private void populaNotas(NotaDAO notaDAO) {
+        notaDAO.insere(new Nota("Primeira Nota", "Descrição pequena"));
+        notaDAO.insere(new Nota("Segunda Nota", "Descrição grande pra cacete, bem maior que a primeira"));
+    }
+
+    private void setRecyclerView(NotaDAO notaDAO) {
         RecyclerView rvNotas = findViewById(R.id.rv_notas);
 
-        NotaDAO notaDAO = new NotaDAO();
-
-        for (int i = 1;  i < 10000; i++) {
-            notaDAO.insere(new Nota("Primeira Nota"  + i, "Primeira descrição"  + i));
-        }
-
-
-
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvNotas.setAdapter(new ListaNotasAdapter(this, notaDAO.todos()));
-        rvNotas.setLayoutManager(layoutManager);
 
-
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        rvNotas.setLayoutManager(layoutManager);
     }
 }
