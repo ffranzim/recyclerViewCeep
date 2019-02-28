@@ -1,10 +1,10 @@
 package br.com.franzim.ceep.ui.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 
 import br.com.franzim.ceep.R;
@@ -33,10 +33,18 @@ public class FormularioNotaActivity extends AppCompatActivity {
             EditText edNotaDescricao = findViewById(R.id.formulario_nota_descricao);
 
             Nota nota = new Nota(edNotaTitulo.getText().toString(), edNotaDescricao.getText().toString());
-            new NotaDAO().insere(nota);
+
+
+            setReturnIntent(nota);
             finish();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setReturnIntent(Nota nota) {
+        Intent resultInsert = new Intent();
+        resultInsert.putExtra("nota", nota);
+        setResult(998, resultInsert);
     }
 }

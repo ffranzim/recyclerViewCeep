@@ -65,4 +65,9 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
             tvDescricaoNota.setText(nota.getDescricao());
         }
     }
+
+    public void addNota(Nota nota) {
+        this.notas.add(nota);
+        notifyDataSetChanged();
+    }
 }
