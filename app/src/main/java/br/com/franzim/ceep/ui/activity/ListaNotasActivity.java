@@ -2,62 +2,44 @@ package br.com.franzim.ceep.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import br.com.franzim.ceep.R;
 import br.com.franzim.ceep.dao.NotaDAO;
 import br.com.franzim.ceep.model.Nota;
 import br.com.franzim.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.CHAVE_NOTA;
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.REQUEST_CODE_INSERE_NOTA;
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.RESULT_CODE_NOTA_CRIADA;
+
 
 public class ListaNotasActivity extends AppCompatActivity {
 
 
     private static final NotaDAO notaDAO;
-
     private ListaNotasAdapter adapter;
 
     static {
         notaDAO = new NotaDAO();
     }
 
-    private List<Nota> todosAsNotas = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
 
-        populaNotas();
-        todosAsNotas = notaDAO.todos();
         setRecyclerView();
         setClickAddNota();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    private void populaNotas() {
-        notaDAO.insere(new Nota("Primeira Nota", "Descrição pequena"));
-        notaDAO.insere(new Nota("Segunda Nota", "Descrição grande pra cacete, bem maior que a primeira"));
-
-    }
-
     private void setRecyclerView() {
         RecyclerView rvNotas = findViewById(R.id.rv_notas);
-        adapter = new ListaNotasAdapter(this, todosAsNotas);
+        adapter = new ListaNotasAdapter(this, notaDAO.todos());
         rvNotas.setAdapter(adapter);
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 //        rvNotas.setLayoutManager(layoutManager);
@@ -69,7 +51,7 @@ public class ListaNotasActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ListaNotasActivity.this, FormularioNotaActivity.class);
-                startActivityForResult(intent, 999);
+                startActivityForResult(intent, REQUEST_CODE_INSERE_NOTA);
             }
         });
     }
@@ -78,8 +60,8 @@ public class ListaNotasActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        if (requestCode == 999 && resultCode == 998 && data.hasExtra("nota")) {
-            Nota nota = (Nota) data.getSerializableExtra("nota");
+        if (requestCode == REQUEST_CODE_INSERE_NOTA && resultCode == RESULT_CODE_NOTA_CRIADA && data.hasExtra(CHAVE_NOTA)) {
+            Nota nota = (Nota) data.getSerializableExtra(CHAVE_NOTA);
             notaDAO.insere(nota);
             adapter.addNota(nota);
         }
