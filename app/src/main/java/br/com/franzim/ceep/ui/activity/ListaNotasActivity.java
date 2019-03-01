@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import br.com.franzim.ceep.dao.NotaDAO;
 import br.com.franzim.ceep.model.Nota;
 import br.com.franzim.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 import br.com.franzim.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
+import br.com.franzim.ceep.ui.recyclerview.helper.NotaItemTouchHelperCallback;
 
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.CHAVE_NOTA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.POSICAO_INVALIDA;
@@ -45,6 +47,8 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private void setRecyclerView() {
         RecyclerView rvNotas = findViewById(R.id.rv_notas);
+
+
         adapter = new ListaNotasAdapter(this, notaDAO.todos());
         rvNotas.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener() {
@@ -56,6 +60,11 @@ public class ListaNotasActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTA);
             }
         });
+
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NotaItemTouchHelperCallback(adapter));
+        itemTouchHelper.attachToRecyclerView(rvNotas);
+
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 //        rvNotas.setLayoutManager(layoutManager);
     }
