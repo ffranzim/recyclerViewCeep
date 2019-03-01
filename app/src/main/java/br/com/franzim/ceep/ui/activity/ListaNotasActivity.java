@@ -16,8 +16,11 @@ import br.com.franzim.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 import br.com.franzim.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.CHAVE_NOTA;
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.POSICAO_NOTA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.REQUEST_CODE_INSERE_NOTA;
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.REQUEST_CODE_UPDATE_NOTA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.RESULT_CODE_NOTA_CRIADA;
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.VALOR_INVALIDO;
 
 
 public class ListaNotasActivity extends AppCompatActivity {
@@ -34,8 +37,8 @@ public class ListaNotasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
 
-        for(int i=1; i <=10; i++)
-        notaDAO.insere(new Nota("Título " + i,"Descrição" + i));
+        for (int i = 1; i <= 10; i++)
+            notaDAO.insere(new Nota("Título " + i, "Descrição " + i));
 
         setRecyclerView();
         setClickAddNota();
@@ -47,8 +50,11 @@ public class ListaNotasActivity extends AppCompatActivity {
         rvNotas.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(Nota nota) {
-                Toast.makeText(ListaNotasActivity.this, "Cliquei em :" + nota.getTitulo(), Toast.LENGTH_LONG).show();
+            public void onItemClick(Nota nota, int posicao) {
+                Intent intent = new Intent(ListaNotasActivity.this, FormularioNotaActivity.class);
+                intent.putExtra(CHAVE_NOTA, nota);
+                intent.putExtra(POSICAO_NOTA, posicao);
+                startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTA);
             }
         });
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -74,6 +80,11 @@ public class ListaNotasActivity extends AppCompatActivity {
             Nota nota = (Nota) data.getSerializableExtra(CHAVE_NOTA);
             notaDAO.insere(nota);
             adapter.addNota(nota);
+        } else if (requestCode == REQUEST_CODE_UPDATE_NOTA && resultCode == RESULT_CODE_NOTA_CRIADA && data.hasExtra(CHAVE_NOTA) && data.hasExtra(POSICAO_NOTA)) {
+            int posicao = data.getIntExtra(POSICAO_NOTA, VALOR_INVALIDO);
+            Nota nota = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+            notaDAO.altera(posicao, nota);
+            adapter.alteraNota(posicao, nota);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
