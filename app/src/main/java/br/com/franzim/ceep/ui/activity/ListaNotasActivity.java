@@ -16,11 +16,10 @@ import br.com.franzim.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 import br.com.franzim.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.CHAVE_NOTA;
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.POSICAO_INVALIDA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.POSICAO_NOTA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.REQUEST_CODE_INSERE_NOTA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.REQUEST_CODE_UPDATE_NOTA;
-import static br.com.franzim.ceep.ui.activity.ConstantsNota.RESULT_CODE_NOTA_CRIADA;
-import static br.com.franzim.ceep.ui.activity.ConstantsNota.VALOR_INVALIDO;
 
 
 public class ListaNotasActivity extends AppCompatActivity {
@@ -76,15 +75,21 @@ public class ListaNotasActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        if (requestCode == REQUEST_CODE_INSERE_NOTA && resultCode == RESULT_CODE_NOTA_CRIADA && data.hasExtra(CHAVE_NOTA)) {
-            Nota nota = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-            notaDAO.insere(nota);
-            adapter.addNota(nota);
-        } else if (requestCode == REQUEST_CODE_UPDATE_NOTA && resultCode == RESULT_CODE_NOTA_CRIADA && data.hasExtra(CHAVE_NOTA) && data.hasExtra(POSICAO_NOTA)) {
-            int posicao = data.getIntExtra(POSICAO_NOTA, VALOR_INVALIDO);
-            Nota nota = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-            notaDAO.altera(posicao, nota);
-            adapter.alteraNota(posicao, nota);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_INSERE_NOTA && data.hasExtra(CHAVE_NOTA)) {
+                Nota nota = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+                notaDAO.insere(nota);
+                adapter.addNota(nota);
+            } else if (requestCode == REQUEST_CODE_UPDATE_NOTA && data.hasExtra(CHAVE_NOTA) && data.hasExtra(POSICAO_NOTA)) {
+                int posicao = data.getIntExtra(POSICAO_NOTA, POSICAO_INVALIDA);
+                if (posicao > POSICAO_INVALIDA) {
+                    Nota nota = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+                    notaDAO.altera(posicao, nota);
+                    adapter.alteraNota(posicao, nota);
+                } else {
+                    Toast.makeText(this, "Ocorreu um problema ao alterar a nota!", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);

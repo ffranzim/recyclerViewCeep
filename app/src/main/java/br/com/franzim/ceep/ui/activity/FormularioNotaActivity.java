@@ -11,34 +11,43 @@ import br.com.franzim.ceep.R;
 import br.com.franzim.ceep.model.Nota;
 
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.CHAVE_NOTA;
+import static br.com.franzim.ceep.ui.activity.ConstantsNota.POSICAO_INVALIDA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.POSICAO_NOTA;
-import static br.com.franzim.ceep.ui.activity.ConstantsNota.RESULT_CODE_NOTA_CRIADA;
-import static br.com.franzim.ceep.ui.activity.ConstantsNota.VALOR_INVALIDO;
 
 public class FormularioNotaActivity extends AppCompatActivity {
 
     private static EditText edNotaTitulo;
     private static EditText edNotaDescricao;
-    private int posicaoNota;
+    private int posicaoNota = POSICAO_INVALIDA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario_nota);
 
-        edNotaTitulo = findViewById(R.id.formulario_nota_titulo);
-        edNotaDescricao = findViewById(R.id.formulario_nota_descricao);
+        bindCamposForm();
+        getValuesIntent();
 
+    }
+
+    private void getValuesIntent() {
         Intent intent = getIntent();
         if (intent.hasExtra(CHAVE_NOTA) && intent.hasExtra(POSICAO_NOTA)) {
-            Nota nota = (Nota) intent.getSerializableExtra(CHAVE_NOTA);
-
-            edNotaTitulo.setText(nota.getTitulo());
-            edNotaDescricao.setText(nota.getDescricao());
-
-            posicaoNota = intent.getIntExtra(POSICAO_NOTA, VALOR_INVALIDO);
+            setCamposForm(intent);
+            posicaoNota = intent.getIntExtra(POSICAO_NOTA, POSICAO_INVALIDA);
         }
+    }
 
+    private void setCamposForm(Intent intent) {
+        Nota nota = (Nota) intent.getSerializableExtra(CHAVE_NOTA);
+        edNotaTitulo.setText(nota.getTitulo());
+        edNotaDescricao.setText(nota.getDescricao());
+    }
+
+
+    private void bindCamposForm() {
+        edNotaTitulo = findViewById(R.id.formulario_nota_titulo);
+        edNotaDescricao = findViewById(R.id.formulario_nota_descricao);
     }
 
     @Override
@@ -49,9 +58,9 @@ public class FormularioNotaActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.menu_formulario_ic_nota_salva) {
+        if (item.getItemId() == R.id.menu_formulario_ic_nota_salva) {
             Nota nota = extraiNotaForm();
-            setReturnIntent(RESULT_CODE_NOTA_CRIADA, nota);
+            setReturnIntent(RESULT_OK, nota);
             finish();
         }
 
