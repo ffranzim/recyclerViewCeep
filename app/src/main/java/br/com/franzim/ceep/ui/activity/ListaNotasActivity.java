@@ -7,11 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import br.com.franzim.ceep.R;
 import br.com.franzim.ceep.dao.NotaDAO;
 import br.com.franzim.ceep.model.Nota;
 import br.com.franzim.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
+import br.com.franzim.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.CHAVE_NOTA;
 import static br.com.franzim.ceep.ui.activity.ConstantsNota.REQUEST_CODE_INSERE_NOTA;
@@ -19,7 +21,6 @@ import static br.com.franzim.ceep.ui.activity.ConstantsNota.RESULT_CODE_NOTA_CRI
 
 
 public class ListaNotasActivity extends AppCompatActivity {
-
 
     private static final NotaDAO notaDAO;
     private ListaNotasAdapter adapter;
@@ -33,6 +34,9 @@ public class ListaNotasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
 
+        for(int i=1; i <=10; i++)
+        notaDAO.insere(new Nota("Título " + i,"Descrição" + i));
+
         setRecyclerView();
         setClickAddNota();
     }
@@ -41,6 +45,12 @@ public class ListaNotasActivity extends AppCompatActivity {
         RecyclerView rvNotas = findViewById(R.id.rv_notas);
         adapter = new ListaNotasAdapter(this, notaDAO.todos());
         rvNotas.setAdapter(adapter);
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(Nota nota) {
+                Toast.makeText(ListaNotasActivity.this, "Cliquei em :" + nota.getTitulo(), Toast.LENGTH_LONG).show();
+            }
+        });
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 //        rvNotas.setLayoutManager(layoutManager);
     }

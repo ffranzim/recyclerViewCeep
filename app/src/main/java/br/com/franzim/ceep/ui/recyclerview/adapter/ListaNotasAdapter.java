@@ -13,6 +13,7 @@ import java.util.List;
 
 import br.com.franzim.ceep.R;
 import br.com.franzim.ceep.model.Nota;
+import br.com.franzim.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.NotaViewHolder> {
 
@@ -21,6 +22,8 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
 
     private static int quantidadeViewCriadas;
     private static int quantidadeBindView;
+
+    private OnItemClickListener onItemClickListener;
 
     public ListaNotasAdapter(Context context, List<Nota> notas) {
         this.context = context;
@@ -53,14 +56,22 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
 
         private final TextView tvTituloNota;
         private final TextView tvDescricaoNota;
+        private Nota nota;
 
         public NotaViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTituloNota = itemView.findViewById(R.id.item_nota_titulo);
             tvDescricaoNota = itemView.findViewById(R.id.item_nota_descricao);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(nota);
+                }
+            });
         }
 
         public void setVincula(Nota nota) {
+            this.nota = nota;
             tvTituloNota.setText(nota.getTitulo());
             tvDescricaoNota.setText(nota.getDescricao());
         }
@@ -69,5 +80,9 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     public void addNota(Nota nota) {
         this.notas.add(nota);
         notifyDataSetChanged();
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 }
