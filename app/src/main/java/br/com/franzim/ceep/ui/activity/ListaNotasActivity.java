@@ -37,9 +37,7 @@ public class ListaNotasActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
-
-        for (int i = 1; i <= 10; i++)
-            notaDAO.insere(new Nota("Título " + i, "Descrição " + i));
+        setTitle(R.string.lista_notas_activity_titulo);
 
         setRecyclerView();
         setClickAddNota();

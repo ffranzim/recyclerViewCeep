@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Ceep</string>
     <string name="action_save">Salvar Nota</string>
+    <string name="lista_notas_activity_titulo">Notas</string>
+    <string name="form_nota_activity_cria_nota_titulo">Insere Nota</string>
+    <string name="form_nota_activity_altera_nota_titulo">Altera Nota</string>
 </resources>
